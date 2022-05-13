@@ -1,0 +1,13 @@
+package com.hr.spring.model.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import java.util.List;
+
+@Data
+public class ExamQuestionDTO {
+    private Long id;
+    private String question;
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    private List<QuestionAnswerDTO> questionAnswers;
+}
