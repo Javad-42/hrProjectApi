@@ -1,15 +1,15 @@
 package com.hr.spring.model.mapper;
 
-import com.hr.spring.model.dto.TrainingDTO;
+import com.hr.spring.model.dto.TrainingDto;
 import com.hr.spring.model.entity.Training;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface TrainingMapper {
-    TrainingMapper INSTANCE = Mappers.getMapper(TrainingMapper.class);
+    Training dtoToModel(TrainingDto trainingDto);
 
-    TrainingDTO modelToDto(Training training);
+    TrainingDto modelToDto(Training training);
 
-    Training dtoToModel(TrainingDTO trainingDTO);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Training updateTrainingFromTrainingDto(TrainingDto trainingDto, @MappingTarget Training training);
 }

@@ -1,100 +1,90 @@
 package com.hr.spring.model.entity;
 
-
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.sql.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.*;
 
-@Entity
-@Table(name = "user", schema = "public",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "username"),
-                @UniqueConstraint(columnNames = "email")
-        })
-
-@Data
-@RequiredArgsConstructor
+@Builder
 @AllArgsConstructor
-public class User {
+@NoArgsConstructor
+@Getter
+@Setter
+@Entity
+@Table(name = "users")
+public class User implements Serializable {
+    private static final long serialVersionUID = 5808438548904183851L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
-    @NotNull
-    @Size(max = 20)
-    private String username;
-    @NotBlank
+
     @Size(max = 50)
-    @Email
+    @Column(name = "email", length = 50)
     private String email;
-    @NotBlank
-    @Size(max = 120)
-    private String password;
-    private String name;
-    private String surname;
-    private String father_name;
-    private Date year_of_birth;
-    private String phone;
-    @NotNull
-    private String position;
+
+    @Column(name = "experience")
     private Integer experience;
+
+    @Size(max = 50)
+    @Column(name = "father_name", length = 50)
+    private String fatherName;
+
+    @Size(max = 20)
+    @Column(name = "marital_status", length = 20)
     private String maritalStatus;
 
-    @OneToMany(mappedBy = "userStatus")
-    private List<Status> statuses;
+    @Size(max = 30)
+    @Column(name = "name", length = 30)
+    private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @Size(max = 255)
+    @Column(name = "password")
+    private String password;
+
+    @Size(max = 15)
+    @Column(name = "phone", length = 15)
+    private String phone;
+
+    @Size(max = 40)
+    @Column(name = "positions", length = 40)
+    private String position;
+
+    @Size(max = 50)
+    @Column(name = "surname", length = 50)
+    private String surname;
+
+    @Size(max = 50)
+    @Column(name = "username", length = 50)
+    private String username;
+
+    @Column(name = "year_of_birth")
+    private LocalDate yearOfBirth;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<UserTraining> userTrainings = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<UserExam> userExams = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Status> statuses = new ArrayList<>();
+
+    @Builder.Default
+    @ManyToMany
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
-
-    @OneToMany(mappedBy = "user")
-    private List<UserTraining> trainings;
-
-    @OneToMany(mappedBy = "userE")
-    private List<UserExam> exams;
-
-    public User(String username, String email, String password, String name, String surname,
-                String father_name,
-                Date year_of_birth,
-                String phone) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.father_name = father_name;
-        this.year_of_birth = year_of_birth;
-        this.phone = phone;
-    }
-
-    public User(String username, String email, String password, String name, String surname,
-                String father_name,
-                Date year_of_birth,
-                String phone,
-                String position,
-                Company company) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.father_name = father_name;
-        this.year_of_birth = year_of_birth;
-        this.phone = phone;
-        this.position = position;
-        this.company = company;
-    }
 }

@@ -1,6 +1,6 @@
 package com.hr.spring.service;
 
-import com.hr.spring.model.dto.CompanyDTO;
+import com.hr.spring.model.dto.CompanyDto;
 import com.hr.spring.model.entity.Company;
 import com.hr.spring.model.mapper.CompanyMapper;
 import com.hr.spring.repository.CompanyRepository;
@@ -19,38 +19,38 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
 
-    public List<CompanyDTO> getCompanies() {
+    public List<CompanyDto> getCompanies() {
         return companyRepository.findAll()
                 .stream()
                 .map(companyMapper::modelToDto)
                 .collect(Collectors.toList());
     }
 
-    public CompanyDTO getCompany(Long id) {
+    public CompanyDto getCompany(Integer id) {
         Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"No Company found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Company found"));
         return companyMapper.modelToDto(company);
     }
 
-    public CompanyDTO createCompany(CompanyDTO companyDto) {
+    public CompanyDto createCompany(CompanyDto companyDto) {
         Company company = companyMapper.dtoToModel(companyDto);
         companyRepository.save(company);
         return companyDto;
     }
 
-    public CompanyDTO updateCompany(Long id, CompanyDTO companyDTO) {
+    public CompanyDto updateCompany(Integer id, CompanyDto companyDTO) {
         Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"No Company found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Company found"));
         company.setName(companyDTO.getName());
         company.setEmail(companyDTO.getEmail());
-        company.setRegistration_date(companyDTO.getRegistration_date());
+        company.setRegistrationDate(companyDTO.getRegistrationDate());
         companyRepository.save(company);
         return companyDTO;
     }
 
-    public ResponseEntity<HttpStatus> deleteCompany(Long id) {
+    public ResponseEntity<HttpStatus> deleteCompany(Integer id) {
         if (!companyRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No Company found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Company found");
         }
         companyRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

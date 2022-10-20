@@ -1,15 +1,20 @@
 package com.hr.spring.model.mapper;
 
-import com.hr.spring.model.dto.CompanyDTO;
+import com.hr.spring.model.dto.CompanyDto;
 import com.hr.spring.model.entity.Company;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface CompanyMapper {
-    CompanyMapper INSTANCE = Mappers.getMapper(CompanyMapper.class);
+    Company dtoToModel(CompanyDto companyDto);
 
-    CompanyDTO modelToDto(Company company);
+    CompanyDto modelToDto(Company company);
 
-    Company dtoToModel(CompanyDTO companyDTO);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Company updateCompanyFromCompanyDto(CompanyDto companyDto, @MappingTarget Company company);
+
+    @AfterMapping
+    default void linkUsers(@MappingTarget Company company) {
+        company.getUsers().forEach(user -> user.setCompany(company));
+    }
 }

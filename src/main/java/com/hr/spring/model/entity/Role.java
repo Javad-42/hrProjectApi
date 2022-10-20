@@ -1,23 +1,36 @@
 package com.hr.spring.model.entity;
 
-import com.hr.spring.model.ERole;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-@Entity
-@Table(name = "roles", schema = "public")
-@Data
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
-public class Role {
+@NoArgsConstructor
+@Getter
+@Setter
+@Entity
+@Table(name = "roles")
+public class Role implements Serializable {
+    private static final long serialVersionUID = 516817456905027058L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id", nullable = false)
+    private Short id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ERole name;
+    @Size(max = 20)
+    @Column(name = "name", length = 20)
+    private String name;
+
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> users = new LinkedHashSet<>();
+
 }

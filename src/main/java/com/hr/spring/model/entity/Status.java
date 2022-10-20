@@ -1,28 +1,31 @@
 package com.hr.spring.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 
-@Entity
-@Table(name = "status", schema = "public")
-@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Status {
+@Getter
+@Setter
+@Entity
+@Table(name = "status")
+public class Status implements Serializable {
+    private static final long serialVersionUID = 466559994427210524L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id", nullable = false)
+    private Short id;
+
+    @Size(max = 100)
+    @Column(name = "description", length = 100)
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User userStatus;
+    private User user;
 
-    public Status(String description, User user) {
-        this.description = description;
-        this.userStatus = user;
-    }
 }

@@ -1,29 +1,50 @@
 package com.hr.spring.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
-@Entity
-@Table(name = "training", schema = "public")
-@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Training {
+@Getter
+@Setter
+@Entity
+@Table(name = "training")
+public class Training implements Serializable {
+    private static final long serialVersionUID = -1718115493331279522L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
+    @Size(max = 255)
+    @Column(name = "description")
     private String description;
-    private String video_url;
-    private Integer status;
 
-    @OneToMany(mappedBy = "trainings")
-    List<CompanyTraining> companyTrainings;
+    @Size(max = 255)
+    @Column(name = "name")
+    private String name;
 
+    @Column(name = "status")
+    private Short status;
+
+    @Size(max = 255)
+    @Column(name = "video_url")
+    private String videoUrl;
+
+    @Builder.Default
     @OneToMany(mappedBy = "training")
-    List<UserTraining> userTrainings;
+    private Set<UserTraining> userTrainings = new LinkedHashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "training")
+    private List<CompanyTraining> companyTrainings = new ArrayList<>();
+
 }

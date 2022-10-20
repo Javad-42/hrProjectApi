@@ -1,30 +1,39 @@
 package com.hr.spring.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
-@Entity
-@Table(name = "exam_question", schema = "public")
-@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-/*@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")*/
-public class ExamQuestion {
+@Getter
+@Setter
+@Entity
+@Table(name = "exam_question")
+public class ExamQuestion implements Serializable {
+    private static final long serialVersionUID = 7141162992731538554L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
+    @Size(max = 255)
+    @Column(name = "question")
     private String question;
 
-    @OneToMany(mappedBy = "examQuestion",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<QuestionAnswer> questionAnswers;
-
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exam_id")
     private Exam exam;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "examQuestion")
+    private List<QuestionAnswer> questionAnswers = new ArrayList<>();
+
 }

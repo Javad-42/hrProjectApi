@@ -1,24 +1,34 @@
 package com.hr.spring.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 
-@Entity
-@Table(name = "question_answer", schema = "public")
-@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionAnswer {
+@Getter
+@Setter
+@Entity
+@Table(name = "question_answer")
+public class QuestionAnswer implements Serializable {
+    private static final long serialVersionUID = -8291107313762728995L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
+
+    @Size(max = 255)
+    @Column(name = "answer")
     private String answer;
+
+    @Column(name = "score")
     private Integer score;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exam_question_id")
     private ExamQuestion examQuestion;
+
 }

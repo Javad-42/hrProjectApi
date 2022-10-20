@@ -1,6 +1,7 @@
 package com.hr.spring.security.services;
 
 
+import com.hr.spring.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -8,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hr.spring.model.entity.User;
 import com.hr.spring.repository.UserRepository;
 
 @Service

@@ -1,30 +1,34 @@
 package com.hr.spring.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.io.Serializable;
+import java.time.LocalDate;
 
-@Entity
-@Table(name = "company_training", schema = "public")
-@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyTraining {
+@Getter
+@Setter
+@Entity
+@Table(name = "company_training")
+public class CompanyTraining implements Serializable {
+    private static final long serialVersionUID = 3396121377611813919L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
-    @ManyToOne
+    @Column(name = "buy_date")
+    private LocalDate buyDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
-    private Company companies;
+    private Company company;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_id")
-    private Training trainings;
-
-    private Date buy_date;
+    private Training training;
 
 }

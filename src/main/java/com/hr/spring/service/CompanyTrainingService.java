@@ -1,7 +1,7 @@
 package com.hr.spring.service;
 
-import com.hr.spring.model.dto.CompanyTrainingDTO;
-import com.hr.spring.model.dto.TrainingDTO;
+import com.hr.spring.model.dto.CompanyTrainingDto;
+import com.hr.spring.model.dto.TrainingDto;
 import com.hr.spring.model.entity.CompanyTraining;
 import com.hr.spring.model.entity.Training;
 import com.hr.spring.model.mapper.CompanyMapper;
@@ -11,7 +11,6 @@ import com.hr.spring.repository.CompanyTrainingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,35 +28,34 @@ public class CompanyTrainingService {
     private final TrainingMapper trainingMapper;
     private final CompanyMapper companyMapper;
 
-    public List<CompanyTrainingDTO> getCompanyTrainings() {
+    public List<CompanyTrainingDto> getCompanyTrainings() {
         return companyTrainingRepository.findAll()
                 .stream()
                 .map(companyTrainingMapper::modelToDto)
                 .collect(Collectors.toList());
     }
 
-    public CompanyTrainingDTO getCT(Long id) {
+    public CompanyTrainingDto getCT(Integer id) {
         CompanyTraining companyTraining = companyTrainingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"CompanyTraining not found"));
         return companyTrainingMapper.modelToDto(companyTraining);
     }
 
-    public CompanyTrainingDTO createCT(CompanyTrainingDTO companyTrainingDTO) {
+    public CompanyTrainingDto createCT(CompanyTrainingDto companyTrainingDTO) {
         companyTrainingRepository.save(companyTrainingMapper.dtoToModel(companyTrainingDTO));
         return companyTrainingDTO;
     }
 
-    public CompanyTrainingDTO update(Long id, CompanyTrainingDTO companyTrainingDTO) {
+    public CompanyTrainingDto update(Integer id, CompanyTrainingDto companyTrainingDTO) {
         CompanyTraining companyTraining = companyTrainingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        companyTraining.setBuy_date(companyTrainingDTO.getBuy_date());
-        companyTraining.setTrainings(trainingMapper.dtoToModel(trainingService.getTraining(companyTrainingDTO.getTrainingId())));
-        companyTraining.setCompanies(companyMapper.dtoToModel(companyService.getCompany(companyTrainingDTO.getCompanyId())));
+        companyTraining.setBuyDate(companyTrainingDTO.getBuyDate());
+
         companyTrainingRepository.save(companyTraining);
         return companyTrainingDTO;
     }
 
-    public ResponseEntity<HttpStatus> delete(Long id) {
+    public ResponseEntity<HttpStatus> delete(Integer id) {
         if (!companyTrainingRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "CompanyTraining not found");
         }
@@ -68,28 +66,28 @@ public class CompanyTrainingService {
     //------------ Moderator -------------
 
     /**
-     * Company-ə məxsus training-lər
+     * Company-ə mexsus training-lər
      *
      * @param companyId
      * @return TrainingDTO
      */
-    public List<TrainingDTO> getTr(Long companyId) {
+    public List<TrainingDto> getTr(Long companyId) {
         List<CompanyTraining> trainings = companyTrainingRepository.findAll()
                 .stream()
-                .filter(x -> x.getCompanies().getId().equals(companyId))
+                .filter(x -> x.getCompany().getId().equals(companyId))
                 .collect(Collectors.toList());
         List<Training> trainings1 = new ArrayList<>();
-        trainings.forEach(x -> trainings1.add(x.getTrainings()));
+        trainings.forEach(x -> trainings1.add(x.getTraining()));
         return trainings1
                 .stream()
                 .map(trainingMapper::modelToDto)
                 .collect(Collectors.toList());
     }
 
-    public CompanyTrainingDTO getCT(Long companyId, Long id) {
+    public CompanyTrainingDto getCT(Integer companyId, Integer id) {
         CompanyTraining companyTraining = companyTrainingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        if (!companyTraining.getCompanies().getId().equals(companyId)) {
+        if (!companyTraining.getCompany().getId().equals(companyId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden");
         }
         return companyTrainingMapper.modelToDto(companyTraining);

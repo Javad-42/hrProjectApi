@@ -1,6 +1,6 @@
-package com.hr.spring.controller.admin;
+package com.hr.spring.controller;
 
-import com.hr.spring.model.dto.UserDTO;
+import com.hr.spring.model.dto.UserDto;
 import com.hr.spring.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,25 +13,24 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin/users")
-public class AUserController {
+@RequestMapping("/api/v1/users")
+public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getUsers() {
+    public ResponseEntity<List<UserDto>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("id") Long id) {
+    public ResponseEntity<UserDto> getUser(@PathVariable("id") Long id) {
         return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDto,
+    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto,
                                               @PathVariable("id") Long id) {
-        userService.updateUser(id, userDto);
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
 
     @DeleteMapping("{id}")

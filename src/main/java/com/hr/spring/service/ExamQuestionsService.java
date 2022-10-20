@@ -1,12 +1,13 @@
 package com.hr.spring.service;
 
-import com.hr.spring.model.dto.ExamDTO;
-import com.hr.spring.model.dto.ExamQuestionDTO;
+import com.hr.spring.model.dto.ExamDto;
+import com.hr.spring.model.dto.ExamQuestionDto;
 import com.hr.spring.model.entity.Exam;
 import com.hr.spring.model.entity.ExamQuestion;
 import com.hr.spring.model.mapper.ExamMapper;
 import com.hr.spring.model.mapper.ExamQuestionMapper;
-import com.hr.spring.repository.examsRepository.ExamQuestionRepository;
+
+import com.hr.spring.repository.ExamQuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,13 @@ public class ExamQuestionsService {
     private final ExamMapper examMapper;
     private final ExamQuestionMapper examQuestionMapper;
 
-    public List<ExamQuestionDTO> getQuestions(Long id) {
-        ExamDTO examDTO = examService.getExam(id);
-        return examDTO.getExamQuestionList();
+    public List<ExamQuestionDto> getQuestions(Integer id) {
+        return null;
     }
 
-    public ExamQuestionDTO getQuestion(Long id, Long id1) {
-        List<ExamQuestionDTO> examQuestionList = getQuestions(id);
-        for (ExamQuestionDTO examQuestion : examQuestionList) {
+    public ExamQuestionDto getQuestion(Integer id, Long id1) {
+        List<ExamQuestionDto> examQuestionList = getQuestions(id);
+        for (ExamQuestionDto examQuestion : examQuestionList) {
             if (examQuestion.getId().equals(id1)) {
                 return examQuestion;
             }
@@ -39,8 +39,8 @@ public class ExamQuestionsService {
         return null;
     }
 
-    public List<ExamQuestionDTO> createQuestions(Long id, List<ExamQuestionDTO> examQuestionList) {
-        ExamDTO examDTO = examService.getExam(id);
+    public List<ExamQuestionDto> createQuestions(Integer id, List<ExamQuestionDto> examQuestionList) {
+        ExamDto examDTO = examService.getExam(id);
         Exam exam = examMapper.dtoToModel(examDTO);
 
         List<ExamQuestion> examQuestions = examQuestionList
@@ -58,7 +58,7 @@ public class ExamQuestionsService {
         return examQuestionList;
     }
 
-    public ExamQuestionDTO updateQuestions(Long id, Long id1, ExamQuestionDTO examQuestionDTO) {
+    public ExamQuestionDto updateQuestions(Integer id, Integer id1, ExamQuestionDto examQuestionDTO) {
         ExamQuestion examQuestion = examQuestionRepository.findById(id1)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         ExamQuestion examQuestion1 = examQuestionMapper.dtoToModel(examQuestionDTO);
@@ -72,7 +72,7 @@ public class ExamQuestionsService {
         return examQuestionMapper.modelToDto(examQuestion1);
     }
 
-    public ResponseEntity<HttpStatus> deleteQuestion(Long id) {
+    public ResponseEntity<HttpStatus> deleteQuestion(Integer id) {
         if (!examQuestionRepository.existsById(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Question not found!");
         examQuestionRepository.deleteById(id);

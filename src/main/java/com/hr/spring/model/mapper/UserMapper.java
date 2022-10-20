@@ -1,19 +1,15 @@
 package com.hr.spring.model.mapper;
 
-import com.hr.spring.model.dto.UserDTO;
+import com.hr.spring.model.dto.UserDto;
 import com.hr.spring.model.entity.User;
-import org.mapstruct.InheritInverseConfiguration;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring",uses = StatusMapper.class)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface UserMapper {
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+    User dtoToModel(UserDto userDto);
 
-    @Mapping(source = "company.id", target = "companyId")
-    UserDTO modelToDto(User user);
+    UserDto modelToDto(User user);
 
-    @InheritInverseConfiguration
-    User dtoToModel(UserDTO userDTO);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    User updateUserFromUserDto(UserDto userDto, @MappingTarget User user);
 }

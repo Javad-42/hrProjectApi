@@ -1,4 +1,4 @@
-package com.hr.spring.controller.admin;
+package com.hr.spring.controller;
 
 
 import com.hr.spring.model.dto.request.LoginRequest;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/admin/reset")
+@RequestMapping("api/v1/reset")
 public class ResetPasswordController {
     private final UserService userService;
 

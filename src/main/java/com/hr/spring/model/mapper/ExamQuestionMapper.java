@@ -1,15 +1,15 @@
 package com.hr.spring.model.mapper;
 
-import com.hr.spring.model.dto.ExamQuestionDTO;
+import com.hr.spring.model.dto.ExamQuestionDto;
 import com.hr.spring.model.entity.ExamQuestion;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface ExamQuestionMapper {
-    ExamQuestionMapper INSTANCE = Mappers.getMapper(ExamQuestionMapper.class);
+    ExamQuestion dtoToModel(ExamQuestionDto examQuestionDto);
 
-    ExamQuestionDTO modelToDto(ExamQuestion examQuestion);
+    ExamQuestionDto modelToDto(ExamQuestion examQuestion);
 
-    ExamQuestion dtoToModel(ExamQuestionDTO examQuestionDTO);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    ExamQuestion updateExamQuestionFromExamQuestionDto(ExamQuestionDto examQuestionDto, @MappingTarget ExamQuestion examQuestion);
 }

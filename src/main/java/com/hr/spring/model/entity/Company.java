@@ -1,31 +1,45 @@
 package com.hr.spring.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import java.sql.Date;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "company", schema = "public")
-@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Company {
+@Getter
+@Setter
+@Entity
+@Table(name = "company")
+public class Company implements Serializable {
+    private static final long serialVersionUID = 6432388094379788555L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    @Email
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
+    @Size(max = 50)
+    @Column(name = "email", length = 50)
     private String email;
-    private Date registration_date;
 
-    @OneToMany(mappedBy = "company", orphanRemoval = true)
-    private List<User> userList;
+    @Size(max = 50)
+    @Column(name = "name", length = 50)
+    private String name;
 
-    @OneToMany(mappedBy = "companies")
-    List<CompanyTraining> companyTrainings;
+    @Column(name = "registration_date")
+    private LocalDate registrationDate;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "company")
+    private List<CompanyTraining> companyTrainings = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "company")
+    private List<User> users = new ArrayList<>();
+
 }

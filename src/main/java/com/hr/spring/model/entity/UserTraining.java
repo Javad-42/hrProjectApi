@@ -1,30 +1,42 @@
 package com.hr.spring.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Date;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.time.LocalDate;
 
-@Entity
-@Table(name = "user_training", schema = "public")
-@Data
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
-public class UserTraining {
+@NoArgsConstructor
+@Getter
+@Setter
+@Entity
+@Table(name = "user_training")
+public class UserTraining implements Serializable {
+    private static final long serialVersionUID = 545122720403976672L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Date start_date;
-    private Date end_date;
-    private int status;
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
-    @ManyToOne
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @NotNull
+    @Column(name = "status", nullable = false)
+    private Short status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "training_id")
+    private Training training;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "training_id")
-    private Training training;
 }

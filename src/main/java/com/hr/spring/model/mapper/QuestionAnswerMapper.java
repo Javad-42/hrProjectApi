@@ -1,15 +1,15 @@
 package com.hr.spring.model.mapper;
 
-import com.hr.spring.model.dto.QuestionAnswerDTO;
+import com.hr.spring.model.dto.QuestionAnswerDto;
 import com.hr.spring.model.entity.QuestionAnswer;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface QuestionAnswerMapper {
-    QuestionAnswerMapper INSTANCE = Mappers.getMapper(QuestionAnswerMapper.class);
+    QuestionAnswer questionAnswerDtoToQuestionAnswer(QuestionAnswerDto questionAnswerDto);
 
-    QuestionAnswerDTO modelToDto(QuestionAnswer questionAnswer);
+    QuestionAnswerDto questionAnswerToQuestionAnswerDto(QuestionAnswer questionAnswer);
 
-    QuestionAnswer dtoToModel(QuestionAnswerDTO questionAnswerDTO);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    QuestionAnswer updateQuestionAnswerFromQuestionAnswerDto(QuestionAnswerDto questionAnswerDto, @MappingTarget QuestionAnswer questionAnswer);
 }

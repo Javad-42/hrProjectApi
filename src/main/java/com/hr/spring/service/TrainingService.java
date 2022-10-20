@@ -1,6 +1,6 @@
 package com.hr.spring.service;
 
-import com.hr.spring.model.dto.TrainingDTO;
+import com.hr.spring.model.dto.TrainingDto;
 import com.hr.spring.model.entity.Training;
 import com.hr.spring.model.mapper.TrainingMapper;
 import com.hr.spring.repository.TrainingRepository;
@@ -19,37 +19,37 @@ public class TrainingService {
     private final TrainingRepository trainingRepository;
     private final TrainingMapper trainingMapper;
 
-    public List<TrainingDTO> getTrainings() {
+    public List<TrainingDto> getTrainings() {
         return trainingRepository.findAll()
                 .stream()
                 .map(trainingMapper::modelToDto)
                 .collect(Collectors.toList());
     }
 
-    public TrainingDTO getTraining(Long id) {
+    public TrainingDto getTraining(Integer id) {
         Training training = trainingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Training not found"));
         return trainingMapper.modelToDto(training);
     }
 
-    public TrainingDTO createTraining(TrainingDTO trainingDTO) {
+    public TrainingDto createTraining(TrainingDto trainingDTO) {
         Training training = trainingMapper.dtoToModel(trainingDTO);
         trainingRepository.save(training);
         return trainingDTO;
     }
 
-    public TrainingDTO updateTraining(Long id, TrainingDTO trainingDTO) {
+    public TrainingDto updateTraining(Integer id, TrainingDto trainingDTO) {
         Training training = trainingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Training not found"));
         training.setName(trainingDTO.getName());
         training.setDescription(trainingDTO.getDescription());
-        training.setVideo_url(trainingDTO.getVideo_url());
+        training.setVideoUrl(trainingDTO.getVideoUrl());
         training.setStatus(trainingDTO.getStatus());
         trainingRepository.save(training);
         return trainingDTO;
     }
 
-    public ResponseEntity<HttpStatus> deleteByTraining(Long id) {
+    public ResponseEntity<HttpStatus> deleteByTraining(Integer id) {
         if (!trainingRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Training not found");
         }

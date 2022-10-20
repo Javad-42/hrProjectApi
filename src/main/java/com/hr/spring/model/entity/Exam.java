@@ -1,28 +1,39 @@
 package com.hr.spring.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
-@Entity
-@Table(name = "exam", schema = "public")
-@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Exam {
+@Getter
+@Setter
+@Entity
+@Table(name = "exam")
+public class Exam implements Serializable {
+    private static final long serialVersionUID = 6907398987408637279L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
+    @Size(max = 50)
+    @Column(name = "name", length = 50)
     private String name;
 
-    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL,orphanRemoval = true)
-    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    private List<ExamQuestion> examQuestionList;
+    @Builder.Default
+    @OneToMany(mappedBy = "exam")
+    private List<ExamQuestion> examQuestions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "exams",orphanRemoval = true,cascade = CascadeType.ALL)
-    private List<UserExam> exams;
+    @Builder.Default
+    @OneToMany(mappedBy = "exam")
+    private List<UserExam> userExams = new ArrayList<>();
+
 }

@@ -1,19 +1,17 @@
 package com.hr.spring.controller.auth;
 
 import com.hr.spring.model.ERole;
+import com.hr.spring.model.dto.request.SignupRequest;
+import com.hr.spring.model.dto.response.MessageResponse;
 import com.hr.spring.model.entity.Company;
 import com.hr.spring.model.entity.Role;
 import com.hr.spring.model.entity.User;
-import com.hr.spring.model.dto.request.SignupRequest;
-import com.hr.spring.model.dto.response.MessageResponse;
 import com.hr.spring.model.mapper.CompanyMapper;
 import com.hr.spring.model.mapper.UserMapper;
 import com.hr.spring.repository.RoleRepository;
 import com.hr.spring.repository.UserRepository;
 import com.hr.spring.service.CompanyService;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,24 +44,27 @@ public class Register {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
         Company company = user.getCompany();
-        User registerUser = new User(signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getName(),
-                signUpRequest.getSurname(),
-                signUpRequest.getFather_name(),
-                signUpRequest.getYear_of_birth(),
-                signUpRequest.getPhone(),
-                signUpRequest.getPosition(),
-                company
-        );
+
+        var persistUser = User.builder()
+                .username(signUpRequest.getUsername())
+                .email(signUpRequest.getEmail())
+                .password(encoder.encode(signUpRequest.getPassword()))
+                .name(signUpRequest.getName())
+                .surname(signUpRequest.getSurname())
+                .fatherName(signUpRequest.getFather_name())
+                .yearOfBirth(signUpRequest.getYear_of_birth().toLocalDate())
+                .phone(signUpRequest.getPhone())
+                .position(signUpRequest.getPosition())
+                .company(company)
+                .build();
+
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName(ERole.USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         roles.add(userRole);
-        registerUser.setRoles(roles);
-        userRepository.save(registerUser);
-        return ResponseEntity.ok(userMapper.modelToDto(registerUser));
+        persistUser.setRoles(roles);
+        userRepository.save(persistUser);
+        return ResponseEntity.ok(userMapper.modelToDto(persistUser));
     }
 
     public ResponseEntity<?> registerModerator(SignupRequest signUpRequest) {
@@ -78,24 +79,25 @@ public class Register {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
         Company company = companyMapper.dtoToModel(companyService.getCompany(signUpRequest.getCompanyId()));
-
-        User registerMod = new User(signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getName(),
-                signUpRequest.getSurname(),
-                signUpRequest.getFather_name(),
-                signUpRequest.getYear_of_birth(),
-                signUpRequest.getPhone(),
-                signUpRequest.getPosition(),
-                company
-        );
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName(ERole.MODERATOR)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         roles.add(userRole);
-        registerMod.setRoles(roles);
-        userRepository.save(registerMod);
-        return ResponseEntity.ok(userMapper.modelToDto(registerMod));
+        var persistUser = User.builder()
+                .username(signUpRequest.getUsername())
+                .email(signUpRequest.getEmail())
+                .password(encoder.encode(signUpRequest.getPassword()))
+                .name(signUpRequest.getName())
+                .surname(signUpRequest.getSurname())
+                .fatherName(signUpRequest.getFather_name())
+                .yearOfBirth(signUpRequest.getYear_of_birth().toLocalDate())
+                .phone(signUpRequest.getPhone())
+                .position(signUpRequest.getPosition())
+                .company(company)
+                .roles(roles)
+                .build();
+
+        userRepository.save(persistUser);
+        return ResponseEntity.ok(userMapper.modelToDto(persistUser));
     }
 }
